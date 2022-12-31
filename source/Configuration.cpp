@@ -20,14 +20,14 @@ std::list<ConfigurationOption*> Configuration::configurationOptions = {
  * Whether audio is enabled or not.
  */
 BasicConfigurationOption<bool> Configuration::audioEnabled(
-    "audio.enabled", true
+    "audio.enabled", false
 );
 
 /**
  * Audio frequency, in Hz
  */
 BasicConfigurationOption<int> Configuration::audioFrequency(
-    "audio.frequency", 48000
+    "audio.frequency", 22050
 );
 
 /**
@@ -48,7 +48,7 @@ BasicConfigurationOption<std::string> Configuration::paletteFileName(
  * Scaling factor for rendering.
  */
 BasicConfigurationOption<int> Configuration::renderScale(
-    "video.scale", 3
+    "video.scale", 1
 );
 
 /**
@@ -62,7 +62,7 @@ BasicConfigurationOption<std::string> Configuration::romFileName(
  * Whether scanlines are enabled or not.
  */
 BasicConfigurationOption<bool> Configuration::scanlinesEnabled(
-    "video.scanlines", true
+    "video.scanlines", false
 );
 
 /**
@@ -88,14 +88,14 @@ void Configuration::initialize(const std::string& fileName)
     // Check that the configuration file exists.
     // If it does not exist, we will fall back to default values.
     //
-    std::ifstream configFile(fileName.c_str());
+    /*std::ifstream configFile(fileName.c_str());
 
     if (configFile.good())
     {
         // Load the configuration file into a property tree to parse it
         //
-        boost::property_tree::ptree propertyTree;
-        boost::property_tree::ini_parser::read_ini(configFile, propertyTree);
+        //boost::property_tree::ptree propertyTree;
+        //boost::property_tree::ini_parser::read_ini(configFile, propertyTree);
 
         // Try to load the value for all known config options
         //
@@ -103,7 +103,7 @@ void Configuration::initialize(const std::string& fileName)
         {
             option->initializeValue(propertyTree);
         }
-    }
+    }*/
 }
 
 bool Configuration::getAudioEnabled()
@@ -133,7 +133,7 @@ int Configuration::getRenderScale()
 
 const std::string& Configuration::getRomFileName()
 {
-    return romFileName.getValue();
+    return romFileName.getValue(); //Fixme
 }
 
 bool Configuration::getScanlinesEnabled()

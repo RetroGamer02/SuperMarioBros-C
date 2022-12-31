@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <iostream>
 
-#include <SDL2/SDL.h>
+#include <SDL/SDL.h>
 
 #include "Emulation/Controller.hpp"
 #include "SMB/SMBEngine.hpp"
@@ -10,11 +10,13 @@
 #include "Configuration.hpp"
 #include "Constants.hpp"
 
+#include "3ds.h"
+
 uint8_t* romImage;
-static SDL_Window* window;
-static SDL_Renderer* renderer;
-static SDL_Texture* texture;
-static SDL_Texture* scanlineTexture;
+//static SDL_Window* window;
+//static SDL_Renderer* renderer;
+static SDL_Surface* texture;
+static SDL_Surface* scanlineTexture;
 static SMBEngine* smbEngine = nullptr;
 static uint32_t renderBuffer[RENDER_WIDTH * RENDER_HEIGHT];
 
@@ -77,7 +79,7 @@ static bool initialize()
     }
 
     // Create the window
-    window = SDL_CreateWindow(APP_TITLE,
+    /*window = SDL_CreateWindow(APP_TITLE,
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
                               RENDER_WIDTH * Configuration::getRenderScale(),
@@ -87,33 +89,39 @@ static bool initialize()
     {
         std::cout << "SDL_CreateWindow() failed during initialize(): " << SDL_GetError() << std::endl;
         return false;
-    }
+    }*/
 
     // Setup the renderer and texture buffer
-    renderer = SDL_CreateRenderer(window, -1, (Configuration::getVsyncEnabled() ? SDL_RENDERER_PRESENTVSYNC : 0) | SDL_RENDERER_ACCELERATED);
-    if (renderer == nullptr)
+    /*renderer = SDL_CreateRenderer(window, -1, (Configuration::getVsyncEnabled() ? SDL_RENDERER_PRESENTVSYNC : 0) | SDL_RENDERER_ACCELERATED);
+    if (screen == nullptr)
     {
         std::cout << "SDL_CreateRenderer() failed during initialize(): " << SDL_GetError() << std::endl;
         return false;
+    }*/
+
+    texture = SDL_SetVideoMode(256, 240, 24, SDL_HWSURFACE);
+    if ( texture == NULL ) {
+        std::cout << "Couldn't set 256x240x24 video mode: %s\n" << SDL_GetError();
+        //exit(1);
     }
 
-    if (SDL_RenderSetLogicalSize(renderer, RENDER_WIDTH, RENDER_HEIGHT) < 0)
+    /*if (SDL_RenderSetLogicalSize(renderer, RENDER_WIDTH, RENDER_HEIGHT) < 0)
     {
         std::cout << "SDL_RenderSetLogicalSize() failed during initialize(): " << SDL_GetError() << std::endl;
         return false;
-    }
+    }*/
 
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, RENDER_WIDTH, RENDER_HEIGHT);
+    /*texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, RENDER_WIDTH, RENDER_HEIGHT);
     if (texture == nullptr)
     {
         std::cout << "SDL_CreateTexture() failed during initialize(): " << SDL_GetError() << std::endl;
         return false;
-    }
+    }*/
 
-    if (Configuration::getScanlinesEnabled())
+    /*if (Configuration::getScanlinesEnabled())
     {
         scanlineTexture = generateScanlineTexture(renderer);
-    }
+    }*/
 
     // Set up custom palette, if configured
     //
@@ -130,7 +138,7 @@ static bool initialize()
     {
         // Initialize audio
         SDL_AudioSpec desiredSpec;
-        desiredSpec.freq = Configuration::getAudioFrequency();
+        desiredSpec.freq = 22050; //Configuration::getAudioFrequency();
         desiredSpec.format = AUDIO_S8;
         desiredSpec.channels = 1;
         desiredSpec.samples = 2048;
@@ -138,7 +146,7 @@ static bool initialize()
         desiredSpec.userdata = NULL;
 
         SDL_AudioSpec obtainedSpec;
-        SDL_OpenAudio(&desiredSpec, &obtainedSpec);
+        SDL_OpenAudio(&desiredSpec, NULL);
 
         // Start playing audio
         SDL_PauseAudio(0);
@@ -154,17 +162,51 @@ static void shutdown()
 {
     SDL_CloseAudio();
 
-    SDL_DestroyTexture(scanlineTexture);
-    SDL_DestroyTexture(texture);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    SDL_FreeSurface(scanlineTexture);
+    SDL_FreeSurface(texture);
+    //SDL_DestroyRenderer(renderer);
+    //SDL_DestroyWindow(window);
 
     SDL_Quit();
 }
 
+void putpixel(SDL_Surface* surface, int x, int y, Uint32 pixel)
+{
+    int bpp = surface->format->BytesPerPixel;
+    /* Here p is the address to the pixel we want to set */
+    Uint8* p = (Uint8*)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch (bpp) {
+    case 1:
+        *p = pixel;
+        break;
+
+    case 2:
+        *(Uint16*)p = pixel;
+        break;
+
+    case 3:
+        if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+            p[0] = (pixel >> 16) & 0xff;
+            p[1] = (pixel >> 8) & 0xff;
+            p[2] = pixel & 0xff;
+        }
+        else {
+            p[0] = pixel & 0xff;
+            p[1] = (pixel >> 8) & 0xff;
+            p[2] = (pixel >> 16) & 0xff;
+        }
+        break;
+
+    case 4:
+        *(Uint32*)p = pixel;
+        break;
+    }
+}
+
 static void mainLoop()
 {
-    SMBEngine engine(romImage);
+    static SMBEngine engine(romImage); //Static to fit into stack.
     smbEngine = &engine;
     engine.reset();
 
@@ -181,20 +223,12 @@ static void mainLoop()
             case SDL_QUIT:
                 running = false;
                 break;
-            case SDL_WINDOWEVENT:
-                switch (event.window.event)
-                {
-                case SDL_WINDOWEVENT_CLOSE:
-                    running = false;
-                    break;
-                }
-                break;
-
             default:
                 break;
             }
         }
-
+        //Fixme
+/*
         const Uint8* keys = SDL_GetKeyboardState(NULL);
         Controller& controller1 = engine.getController1();
         controller1.setButtonState(BUTTON_A, keys[SDL_SCANCODE_X]);
@@ -205,8 +239,8 @@ static void mainLoop()
         controller1.setButtonState(BUTTON_DOWN, keys[SDL_SCANCODE_DOWN]);
         controller1.setButtonState(BUTTON_LEFT, keys[SDL_SCANCODE_LEFT]);
         controller1.setButtonState(BUTTON_RIGHT, keys[SDL_SCANCODE_RIGHT]);
-
-        if (keys[SDL_SCANCODE_R])
+*/
+        /*if (keys[SDL_SCANCODE_R])
         {
             // Reset
             engine.reset();
@@ -216,32 +250,43 @@ static void mainLoop()
             // quit
             running = false;
             break;
-        }
-        if (keys[SDL_SCANCODE_F])
-        {
-            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-        }
+        }*/
 
         engine.update();
         engine.render(renderBuffer);
 
-        SDL_UpdateTexture(texture, NULL, renderBuffer, sizeof(uint32_t) * RENDER_WIDTH);
+        SDL_LockSurface(texture);
 
-        SDL_RenderClear(renderer);
+        int i = 0;
+        for (int y = 0; y < RENDER_HEIGHT; y++)
+        {
+            for (int x = 0; x < RENDER_WIDTH; x++)
+            {
+                    putpixel(texture, x, y, renderBuffer[i]);
+                    i++;
+            }
+        }
+
+        SDL_UnlockSurface(texture);
+
+        //SDL_UpdateTexture(texture, NULL, renderBuffer, sizeof(uint32_t) * RENDER_WIDTH);
+        SDL_Flip(texture);
+
+        //SDL_RenderClear(renderer);
 
         // Render the screen
-        SDL_RenderSetLogicalSize(renderer, RENDER_WIDTH, RENDER_HEIGHT);
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        //SDL_RenderSetLogicalSize(renderer, RENDER_WIDTH, RENDER_HEIGHT);
+        //SDL_RenderCopy(renderer, texture, NULL, NULL);
 
         // Render scanlines
         //
-        if (Configuration::getScanlinesEnabled())
+        /*if (Configuration::getScanlinesEnabled())
         {
             SDL_RenderSetLogicalSize(renderer, RENDER_WIDTH * 3, RENDER_HEIGHT * 3);
             SDL_RenderCopy(renderer, scanlineTexture, NULL, NULL);
         }
 
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(renderer);*/
 
         /**
          * Ensure that the framerate stays as close to the desired FPS as possible. If the frame was rendered faster, then delay. 
@@ -264,6 +309,10 @@ static void mainLoop()
 
 int main(int argc, char** argv)
 {
+    gfxInitDefault();
+    
+	consoleInit(GFX_BOTTOM, NULL);
+
     if (!initialize())
     {
         std::cout << "Failed to initialize. Please check previous error messages for more information. The program will now exit.\n";

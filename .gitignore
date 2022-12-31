@@ -1,4 +1,7 @@
 build/
+.vs/
+CMakeSettings.json
 *.nes
 *.pal
 smbc.conf
+*.bak

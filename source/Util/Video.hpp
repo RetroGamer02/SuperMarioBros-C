@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <string>
 
-#include <SDL2/SDL.h>
+#include <SDL/SDL.h>
 
 /**
  * Constants for specific tiles in CHR.
@@ -44,7 +44,7 @@ void drawText(uint32_t* buffer, int xOffset, int yOffset, const std::string& tex
 /**
  * Generate a texture for a scanline overlay effect.
  */
-SDL_Texture* generateScanlineTexture(SDL_Renderer* renderer);
+//SDL_Texture* generateScanlineTexture(SDL_Renderer* renderer);
 
 /**
  * Load a palette from file.

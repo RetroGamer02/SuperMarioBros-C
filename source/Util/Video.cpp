@@ -138,7 +138,7 @@ void drawText(uint32_t* buffer, int xOffset, int yOffset, const std::string& tex
     }
 }
 
-SDL_Texture* generateScanlineTexture(SDL_Renderer* renderer)
+/*SDL_Texture* generateScanlineTexture(SDL_Renderer* renderer)
 {
     // Create a scanline texture for 3x rendering
     SDL_Texture* scanlineTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, RENDER_WIDTH * 3, RENDER_HEIGHT * 3);
@@ -174,7 +174,7 @@ SDL_Texture* generateScanlineTexture(SDL_Renderer* renderer)
     delete [] scanlineTextureBuffer;
 
     return scanlineTexture;
-}
+}*/
 
 const uint32_t* loadPalette(const std::string& fileName)
 {

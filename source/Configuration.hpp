@@ -5,8 +5,8 @@
 #include <list>
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ini_parser.hpp>
+//#include <boost/property_tree/ptree.hpp>
+//#include <boost/property_tree/ini_parser.hpp>
 
 /**
  * Base class for configuration options.
@@ -33,7 +33,7 @@ public:
     /**
      * Initialize the configuration option from the parsed property tree.
      */
-    virtual void initializeValue(const boost::property_tree::ptree& propertyTree)=0;
+    //virtual void initializeValue(const boost::property_tree::ptree& propertyTree)=0;
 
 private:
     std::string path;
@@ -68,11 +68,11 @@ public:
     /**
      * Initialize the configuration option.
      */
-    void initializeValue(const boost::property_tree::ptree& propertyTree) override
+    /*void initializeValue(const boost::property_tree::ptree& propertyTree) override
     {
         value = propertyTree.get<T>(getPath(), value);
         std::cout << "Configuration option \"" << getPath() << "\" set to \"" << value << "\"" << std::endl;
-    }
+    }*/
 
 private:
     T value;
