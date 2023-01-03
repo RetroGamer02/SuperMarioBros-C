@@ -231,8 +231,10 @@ void PPU::render(uint32_t* buffer)
         buffer[index] = paletteRGB[palette[0]];
     }
 
+    uint8_t spritesEnabled = ppuMask & (1 << 4);
+
     // Draw sprites behind the backround
-    if (ppuMask & (1 << 4)) // Are sprites enabled?
+    if (spritesEnabled) // Are sprites enabled?
     {
         // Sprites with the lowest index in OAM take priority.
         // Therefore, render the array of sprites in reverse order.
@@ -347,7 +349,7 @@ void PPU::render(uint32_t* buffer)
     }
 
     // Draw sprites in front of the background
-    if (ppuMask & (1 << 4))
+    if (spritesEnabled)
     {
         // Sprites with the lowest index in OAM take priority.
         // Therefore, render the array of sprites in reverse order.

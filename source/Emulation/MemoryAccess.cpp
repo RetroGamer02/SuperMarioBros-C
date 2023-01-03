@@ -11,9 +11,6 @@ MemoryAccess::MemoryAccess(SMBEngine& engine, uint8_t* value) :
 MemoryAccess::MemoryAccess(SMBEngine& engine, uint8_t constant_DONTREF) :
     engine(engine)
 {
-    //this->constant = constant;
-    //this->value = &constant;
-
     //Thanks to plgDavid
     this->constant = constant_DONTREF;
     this->value = &constant; //this was evil

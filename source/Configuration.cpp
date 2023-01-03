@@ -20,14 +20,14 @@ std::list<ConfigurationOption*> Configuration::configurationOptions = {
  * Whether audio is enabled or not.
  */
 BasicConfigurationOption<bool> Configuration::audioEnabled(
-    "audio.enabled", false
+    "audio.enabled", true
 );
 
 /**
  * Audio frequency, in Hz
  */
 BasicConfigurationOption<int> Configuration::audioFrequency(
-    "audio.frequency", 22050
+    "audio.frequency", 48000
 );
 
 /**
@@ -69,7 +69,7 @@ BasicConfigurationOption<bool> Configuration::scanlinesEnabled(
  * Whether vsync is enabled for video.
  */
 BasicConfigurationOption<bool> Configuration::vsyncEnabled(
-    "video.vsync", true
+    "video.vsync", false
 );
 
 ConfigurationOption::ConfigurationOption(
@@ -133,7 +133,7 @@ int Configuration::getRenderScale()
 
 const std::string& Configuration::getRomFileName()
 {
-    return romFileName.getValue(); //Fixme
+    return romFileName.getValue();
 }
 
 bool Configuration::getScanlinesEnabled()
