@@ -228,7 +228,6 @@ void PPU::render(uint32_t* buffer)
     // Clear the buffer with the background color
     uint32_t palRGB = paletteRGB[palette[0]];
     for (int index = 256 * 240; index--;)
-    //for (int index = 0; index < 256 * 240; index++)
     {
         buffer[index] = palRGB;
     }

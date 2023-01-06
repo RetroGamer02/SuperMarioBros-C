@@ -86,6 +86,8 @@ static bool initialize()
         std::cout << "Couldn't set 256x240x24 video mode: %s\n" << SDL_GetError();
     }
 
+    SDL_ShowCursor(SDL_DISABLE);
+
     // Set up custom palette, if configured
     //
     if (!Configuration::getPaletteFileName().empty())
@@ -169,6 +171,9 @@ static void mainLoop()
     u32 kDownOld = 0, kHeldOld = 0, kUpOld = 0; //In these variables there will be information about keys detected in the previous frame
     
     Controller& controller1 = engine.getController1();
+
+    int now = 0;
+    int delay = 0;
 
     while (running)
     {
@@ -286,15 +291,15 @@ static void mainLoop()
         engine.update();
         engine.render(renderBuffer);
         
-        SDL_Flip(texture);
+        //SDL_Flip(texture);
         
         /**
          * Ensure that the framerate stays as close to the desired FPS as possible. If the frame was rendered faster, then delay. 
          * If the frame was slower, reset time so that the game doesn't try to "catch up", going super-speed.
          */
-        int now = SDL_GetTicks();
+        now = SDL_GetTicks();
         //int delay = progStartTime + int(double(frame) * double(MS_PER_SEC) / double(Configuration::getFrameRate())) - now;
-        int delay = progStartTime + int((frame) * (MS_PER_SEC) / (Configuration::getFrameRate())) - now;
+        delay = progStartTime + ((frame) * (MS_PER_SEC) / (Configuration::getFrameRate())) - now;
         if(delay > 0) 
         {
             SDL_Delay(delay);
@@ -304,6 +309,7 @@ static void mainLoop()
             frame = 0;
             progStartTime = now;
         }
+        SDL_Flip(texture);
         frame++;
     }
 }
