@@ -77,6 +77,7 @@ private:
     uint8_t registerX;           /**< X index register. */
     uint8_t registerY;           /**< Y index register. */
     uint8_t registerS;           /**< Stack index register. */
+    
     MemoryAccess a;              /**< Wrapper for A register. */
     MemoryAccess x;              /**< Wrapper for X register. */
     MemoryAccess y;              /**< Wrapper for Y register. */
@@ -84,7 +85,7 @@ private:
     uint8_t dataStorage[0x8000]; /**< 32kb of storage for constant data. */
     uint8_t ram[0x800];          /**< 2kb of RAM. */
     uint8_t* chr;                /**< Pointer to CHR data from the ROM. */
-    int returnIndexStack[100];   /**< Stack for managing JSR subroutines. */
+    unsigned int returnIndexStack[100];   /**< Stack for managing JSR subroutines. */
     int returnIndexStackTop;     /**< Current index of the top of the call stack. */
 
     // Pointers to constant data used in the decompiled code

@@ -29,17 +29,17 @@ enum Tile
 /**
  * Draw a box.
  */
-void drawBox(uint32_t* buffer, int xOffset, int yOffset, int width, int height, uint32_t palette = 0);
+void drawBox(uint32_t* buffer, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, uint32_t palette = 0);
 
 /**
  * Draw a tile from CHR memory.
  */
-void drawCHRTile(uint32_t* buffer, int xOffset, int yOffset, int tile, uint32_t palette = 0);
+void drawCHRTile(uint32_t* buffer, unsigned int xOffset, unsigned int yOffset, unsigned int tile, uint32_t palette = 0);
 
 /**
  * Draw a string using characters from CHR.
  */
-void drawText(uint32_t* buffer, int xOffset, int yOffset, const std::string& text, uint32_t palette = 0);
+void drawText(uint32_t* buffer, unsigned int xOffset, unsigned int yOffset, const std::string& text, uint32_t palette = 0);
 
 /**
  * Generate a texture for a scanline overlay effect.

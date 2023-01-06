@@ -226,9 +226,11 @@ void PPU::renderTile(uint32_t* buffer, int index, int xOffset, int yOffset)
 void PPU::render(uint32_t* buffer)
 {
     // Clear the buffer with the background color
-    for (int index = 0; index < 256 * 240; index++)
+    uint32_t palRGB = paletteRGB[palette[0]];
+    for (int index = 256 * 240; index--;)
+    //for (int index = 0; index < 256 * 240; index++)
     {
-        buffer[index] = paletteRGB[palette[0]];
+        buffer[index] = palRGB;
     }
 
     uint8_t spritesEnabled = ppuMask & (1 << 4);

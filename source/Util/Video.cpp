@@ -4,11 +4,11 @@
 
 #include "Video.hpp"
 
-void drawBox(uint32_t* buffer, int xOffset, int yOffset, int width, int height, uint32_t palette)
+void drawBox(uint32_t* buffer, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, uint32_t palette)
 {
-    for (int y = 0; y < height; y++)
+    for (unsigned int y = 0; y < height; y++)
     {
-        for (int x = 0; x < width; x++)
+        for (unsigned int x = 0; x < width; x++)
         {
             int tile;
             if (y == 0)
@@ -61,15 +61,15 @@ void drawBox(uint32_t* buffer, int xOffset, int yOffset, int width, int height, 
     }
 }
 
-void drawCHRTile(uint32_t* buffer, int xOffset, int yOffset, int tile, uint32_t palette)
+void drawCHRTile(uint32_t* buffer, unsigned int xOffset, unsigned int yOffset, unsigned int tile, uint32_t palette)
 {
     // Read the pixels of the tile
-    for( int row = 0; row < 8; row++ )
+    for( unsigned int row = 0; row < 8; row++ )
     {
         uint8_t plane1 = romImage[16 + 2 * 16384 + tile * 16 + row];
         uint8_t plane2 = romImage[16 + 2 * 16384 + tile * 16 + row + 8];
 
-        for( int column = 0; column < 8; column++ )
+        for( unsigned int column = 0; column < 8; column++ )
         {
             uint8_t paletteIndex = (((plane1 & (1 << column)) ? 1 : 0) + ((plane2 & (1 << column)) ? 2 : 0));
             if( paletteIndex == 0 )
@@ -89,8 +89,8 @@ void drawCHRTile(uint32_t* buffer, int xOffset, int yOffset, int tile, uint32_t 
                 pixel = 0xff000000 | paletteRGB[colorIndex];
             }
 
-            int x = (xOffset + (7 - column));
-            int y = (yOffset + row);
+            unsigned int x = (xOffset + (7 - column));
+            unsigned int y = (yOffset + row);
             if (x < 0 || x >= 256 || y < 0 || y >= 240)
             {
                 continue;
@@ -100,7 +100,7 @@ void drawCHRTile(uint32_t* buffer, int xOffset, int yOffset, int tile, uint32_t 
     }
 }
 
-void drawText(uint32_t* buffer, int xOffset, int yOffset, const std::string& text, uint32_t palette)
+void drawText(uint32_t* buffer, unsigned int xOffset, unsigned int yOffset, const std::string& text, uint32_t palette)
 {
     for (size_t i = 0; i < text.length(); i++)
     {
