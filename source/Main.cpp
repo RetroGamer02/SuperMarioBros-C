@@ -11,6 +11,7 @@
 #include "Constants.hpp"
 
 #include "3ds.h"
+#include <dirent.h>
 
 uint8_t* romImage;
 static SDL_Surface* texture;
@@ -314,6 +315,15 @@ int main(int argc, char** argv)
     gfxInitDefault();
     
 	consoleInit(GFX_BOTTOM, NULL);
+
+    DIR* dir = opendir("3ds/SMB");
+    if (dir) {
+        closedir(dir);
+    } else if (ENOENT == errno) {
+        mkdir("3ds/SMB", 0700);
+    } else {
+        printf("SMB directory unknown error.\n");
+    }
 
     if (!initialize())
     {

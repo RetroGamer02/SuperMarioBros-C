@@ -55,7 +55,7 @@ BasicConfigurationOption<int> Configuration::renderScale(
  * Filename for the SMB ROM image.
  */
 BasicConfigurationOption<std::string> Configuration::romFileName(
-    "game.rom_file", "Super Mario Bros. (JU) (PRG0) [!].nes"
+    "game.rom_file", "sdmc:/3ds/SMB/Super Mario Bros. (JU) (PRG0) [!].nes"
 );
 
 /**
