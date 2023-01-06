@@ -15,6 +15,7 @@ Building
 --------
 
 **Dependencies**
+- 3ds-dev
 - C++11 compiler
 - SDL
 - Make
