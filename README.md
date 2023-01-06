@@ -7,7 +7,7 @@ MitchellSternke took the `smbdis.asm` disassembly of Super Mario Bros. and succe
 
 Many thanks to doppelganger (doppelheathen@gmail.com), who wrote the original comprehensive Super Mario Bros. disassembly. This can be found in the `docs/` folder of the repo.
 
-![Demo gif](https://github.com/MitchellSternke/SuperMarioBros-C/raw/master/demo.gif)
+![Screenshot](https://github.com/RetroGamer02/SuperMarioBros-C/blob/master/SMB-3DS-Screenshot.png)
 
 *looks and plays just like the original*
 
@@ -19,10 +19,7 @@ Building
 - SDL
 - Make
 
-Build
-```
 The project uses the devkitpro 3ds dev environment. When you have installed git on your system you can clone the repository by type in git clone https://github.com/RetroGamer02/SuperMarioBros-C.git. You will probably need the DevkitARM Patch but please make a backup of your DevkitARM folder first! Run msys2 and type make.
-```
 
 Running
 -------
