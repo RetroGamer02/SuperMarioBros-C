@@ -7,6 +7,8 @@
 
 #include "APU.hpp"
 
+#include "../tonccpy.h"
+
 static const uint8_t lengthTable[] = {
     10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 14, 12, 26, 14,
     12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 28, 32, 30
@@ -515,17 +517,17 @@ uint8_t APU::getOutput()
 void APU::output(uint8_t* buffer, int len)
 {
     len = (len > audioBufferLength) ? audioBufferLength : len;
-    memcpy(buffer, audioBuffer, len);
+    tonccpya(buffer, audioBuffer, len);
     if (len > audioBufferLength)
     {
-        memcpy(buffer, audioBuffer, audioBufferLength);
+        tonccpya(buffer, audioBuffer, audioBufferLength);
         audioBufferLength = 0;
     }
     else
     {
-        memcpy(buffer, audioBuffer, len);
+        tonccpya(buffer, audioBuffer, len);
         audioBufferLength -= len;
-        memcpy(audioBuffer, audioBuffer + len, audioBufferLength);
+        tonccpya(audioBuffer, audioBuffer + len, audioBufferLength);
     }
 }
 

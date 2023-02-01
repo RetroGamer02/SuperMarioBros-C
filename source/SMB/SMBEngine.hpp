@@ -51,6 +51,7 @@ public:
      * @param buffer a 256x240 32-bit color buffer for storing the rendering.
      */
     void render(uint32_t* buffer);
+    void renderBG(uint32_t* buffer);
 
     /**
      * Reset the game engine to power-on state.
@@ -177,7 +178,8 @@ private:
     /**
      * Map constant data to the address space. The address must be at least 0x8000.
      */
-    void writeData(uint16_t address, const uint8_t* data, std::size_t length);
+    void writeData(uint16_t address, const uint8_t* data, unsigned int length);
+    //void writeData(uint16_t address, const uint8_t* data, std::size_t length);
 };
 
 #endif // SMBENGINE_HPP

@@ -21,7 +21,8 @@ static uint32_t renderBuffer[RENDER_WIDTH * RENDER_HEIGHT];
 
 Thread drawThread;
 bool running = true;
-Uint8* pixel;
+u32 kDown;
+u32 kUp;
 
 /**
  * Load the Super Mario Bros. ROM image.
@@ -106,7 +107,7 @@ static bool initialize()
         desiredSpec.freq = Configuration::getAudioFrequency();
         desiredSpec.format = AUDIO_S8;
         desiredSpec.channels = 1;
-        desiredSpec.samples = 2048;
+        desiredSpec.samples = 1024;//2048
         desiredSpec.callback = audioCallback;
         desiredSpec.userdata = NULL;
 
@@ -134,6 +135,7 @@ static void shutdown()
 
 void drawThreadFunc(void(*))
 {
+    Uint8* pixel;
     int i = 0;
     for (int y = 0; y < RENDER_HEIGHT; y++)
     {
@@ -144,6 +146,7 @@ void drawThreadFunc(void(*))
             i++;
         }
     }
+    smbEngine->renderBG(renderBuffer);
 }
 
 static void mainLoop()
@@ -167,13 +170,8 @@ static void mainLoop()
 		"KEY_CSTICK_RIGHT", "KEY_CSTICK_LEFT", "KEY_CSTICK_UP", "KEY_CSTICK_DOWN",
 		"KEY_CPAD_RIGHT", "KEY_CPAD_LEFT", "KEY_CPAD_UP", "KEY_CPAD_DOWN"
 	};
-
-    u32 kDownOld = 0, kHeldOld = 0, kUpOld = 0; //In these variables there will be information about keys detected in the previous frame
     
     Controller& controller1 = engine.getController1();
-
-    int now = 0;
-    int delay = 0;
 
     while (running)
     {
@@ -183,108 +181,92 @@ static void mainLoop()
 
         //Scan all the inputs. This should be done once for each frame
 		hidScanInput();
-
 		//hidKeysDown returns information about which buttons have been just pressed (and they weren't in the previous frame)
 		u32 kDown = hidKeysDown();
-		//hidKeysHeld returns information about which buttons have are held down in this frame
-		u32 kHeld = hidKeysHeld();
 		//hidKeysUp returns information about which buttons have been just released
 		u32 kUp = hidKeysUp();
 
         {
-        if (kDown & KEY_START)
-        {
-            controller1.setButtonState(BUTTON_START, true);
-        }
-        if (kUp & KEY_START)
-        {
-            controller1.setButtonState(BUTTON_START, false);
-        }
-        if (kDown & KEY_SELECT)
-        {
-            controller1.setButtonState(BUTTON_SELECT, true);
-        }
-        if (kUp & KEY_SELECT)
-        {
-            controller1.setButtonState(BUTTON_SELECT, false);
-        }
-        if (kDown & KEY_A)
-        {
-            controller1.setButtonState(BUTTON_A, true);
-        }
-        if (kUp & KEY_A)
-        {
-            controller1.setButtonState(BUTTON_A, false);
-        }
-        if (kDown & KEY_B)
-        {
-            controller1.setButtonState(BUTTON_B, true);
-        }
-        if (kUp & KEY_B)
-        {
-            controller1.setButtonState(BUTTON_B, false);
-        }
-        /*if (kDown & KEY_X)
-        {
-            
-        }
-        if (kUp & KEY_X)
-        {
-            
-        }
-        if (kDown & KEY_Y)
-        {
-           
-        }
-        if (kUp & KEY_Y)
-        {
-            
-        }*/
-        if (kDown & KEY_DLEFT)
-        {
-            controller1.setButtonState(BUTTON_LEFT, true);
-        }
-        if (kUp & KEY_DLEFT)
-        {
-            controller1.setButtonState(BUTTON_LEFT, false);
-        }
-        if (kDown & KEY_DRIGHT)
-        {
-            controller1.setButtonState(BUTTON_RIGHT, true);
-        }
-        if (kUp & KEY_DRIGHT)
-        {
-            controller1.setButtonState(BUTTON_RIGHT, false);
-        }
-        if (kDown & KEY_DUP)
-        {
-            controller1.setButtonState(BUTTON_UP, true);
-        }
-        if (kUp & KEY_DUP)
-        {
-            controller1.setButtonState(BUTTON_UP, false);
-        }
-        if (kDown & KEY_DDOWN)
-        {
-           controller1.setButtonState(BUTTON_DOWN, true);
-        }
-        if (kUp & KEY_DDOWN)
-        {
-            controller1.setButtonState(BUTTON_DOWN, false);
-        }
-
-		//Set keys old values for the next frame
-		kDownOld = kDown;
-		kHeldOld = kHeld;
-		kUpOld = kUp;
-
-            switch (event.type)
+            if (kDown & KEY_START)
             {
-            case SDL_QUIT:
-                running = false;
-                break;
-            default:
-                break;
+                controller1.setButtonState(BUTTON_START, true);
+            }
+            if (kUp & KEY_START)
+            {
+                controller1.setButtonState(BUTTON_START, false);
+            }
+            if (kDown & KEY_SELECT)
+            {
+                controller1.setButtonState(BUTTON_SELECT, true);
+            }
+            if (kUp & KEY_SELECT)
+            {
+                controller1.setButtonState(BUTTON_SELECT, false);
+            }
+            if (kDown & KEY_A)
+            {
+                controller1.setButtonState(BUTTON_A, true);
+            }
+            if (kUp & KEY_A)
+            {
+                controller1.setButtonState(BUTTON_A, false);
+            }
+            if (kDown & KEY_B)
+            {
+                controller1.setButtonState(BUTTON_B, true);
+            }
+            if (kUp & KEY_B)
+            {
+                controller1.setButtonState(BUTTON_B, false);
+            }
+            /*if (kDown & KEY_X)
+            {
+                
+            }
+            if (kUp & KEY_X)
+            {
+                
+            }*/
+            if (kDown & KEY_Y)
+            {
+                shutdown();
+                exit(0);
+            }
+            /*if (kUp & KEY_Y)
+            {
+                
+            }*/
+            if (kDown & KEY_DLEFT)
+            {
+                controller1.setButtonState(BUTTON_LEFT, true);
+            }
+            if (kUp & KEY_DLEFT)
+            {
+                controller1.setButtonState(BUTTON_LEFT, false);
+            }
+            if (kDown & KEY_DRIGHT)
+            {
+                controller1.setButtonState(BUTTON_RIGHT, true);
+            }
+            if (kUp & KEY_DRIGHT)
+            {
+                controller1.setButtonState(BUTTON_RIGHT, false);
+            }
+            if (kDown & KEY_DUP)
+            {
+                controller1.setButtonState(BUTTON_UP, true);
+            }
+            if (kUp & KEY_DUP)
+            {
+                controller1.setButtonState(BUTTON_UP, false);
+            }
+            if (kDown & KEY_DDOWN)
+            {
+            controller1.setButtonState(BUTTON_DOWN, true);
+            }
+            if (kUp & KEY_DDOWN)
+            {
+                controller1.setButtonState(BUTTON_DOWN, false);
             }
         }
 
@@ -297,9 +279,9 @@ static void mainLoop()
          * Ensure that the framerate stays as close to the desired FPS as possible. If the frame was rendered faster, then delay. 
          * If the frame was slower, reset time so that the game doesn't try to "catch up", going super-speed.
          */
-        now = SDL_GetTicks();
+        int now = SDL_GetTicks();
         //int delay = progStartTime + int(double(frame) * double(MS_PER_SEC) / double(Configuration::getFrameRate())) - now;
-        delay = progStartTime + ((frame) * (MS_PER_SEC) / (Configuration::getFrameRate())) - now;
+        int delay = progStartTime + ((frame) * (MS_PER_SEC) / (Configuration::getFrameRate())) - now;
         if(delay > 0) 
         {
             SDL_Delay(delay);

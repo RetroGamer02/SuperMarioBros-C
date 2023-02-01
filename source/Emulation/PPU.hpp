@@ -21,6 +21,7 @@ public:
      * Render to a frame buffer.
      */
     void render(uint32_t* buffer);
+    void renderBG(uint32_t* buffer);
 
     void writeDMA(uint8_t page);
 

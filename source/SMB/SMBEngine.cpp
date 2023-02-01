@@ -8,6 +8,8 @@
 
 #include "SMBEngine.hpp"
 
+#include "../tonccpy.h"
+
 #define DATA_STORAGE_OFFSET 0x8000 // Starting address for storing constant data
 
 //---------------------------------------------------------------------
@@ -57,6 +59,11 @@ Controller& SMBEngine::getController2()
 void SMBEngine::render(uint32_t* buffer)
 {
     ppu->render(buffer);
+}
+
+void SMBEngine::renderBG(uint32_t* buffer)
+{
+    ppu->renderBG(buffer);
 }
 
 void SMBEngine::reset()
@@ -228,5 +235,6 @@ void SMBEngine::writeData(uint16_t address, const uint8_t* data, size_t length)
 {
     address -= DATA_STORAGE_OFFSET;
 
-    memcpy(dataStorage + (std::ptrdiff_t)address, data, length);
+    //memcpy(dataStorage + (std::ptrdiff_t)address, data, length);
+    memcpy(dataStorage + (int)address, data, length);
 }
