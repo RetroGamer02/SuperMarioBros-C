@@ -282,7 +282,7 @@ static inline C3D_FVec FVec3_Cross(C3D_FVec lhs, C3D_FVec rhs)
  */
 static inline void Mtx_Zeros(C3D_Mtx* out)
 {
-	(out, 0, sizeof(*out));
+	memset(out, 0, sizeof(*out));
 }
 
 /**
