@@ -95,14 +95,14 @@ uint8_t PPU::getAttributeTableValue(uint16_t nametableAddress)
     nametableAddress = getNametableIndex(nametableAddress);
 
     // Determine the 32x32 attribute table address
-    int row = ((nametableAddress & 0x3e0) >> 5) / 4;
-    int col = (nametableAddress & 0x1f) / 4;
+    int row = ((nametableAddress & 0x3e0) >> 5) >> 2;
+    int col = (nametableAddress & 0x1f) >> 2;
 
     // Determine the 16x16 metatile for the 8x8 tile addressed
     int shift = ((nametableAddress & (1 << 6)) ? 4 : 0) + ((nametableAddress & (1 << 1)) ? 2 : 0);
 
     // Determine the offset into the attribute table
-    int offset = (nametableAddress & 0xc00) + 0x400 - 64 + (row * 8 + col);
+    int offset = (nametableAddress & 0xc00) + 0x400 - 64 + ((row << 3) + col);
 
     // Determine the attribute table value
     return (nametable[offset] & (0x3 << shift)) >> shift;
@@ -196,13 +196,13 @@ void PPU::renderTile(uint32_t* buffer, int index, int xOffset, int yOffset)
     // Read the pixels of the tile
     for( int row = 0; row < 8; row++ )
     {
-        uint8_t plane1 = readCHR(tile * 16 + row);
-        uint8_t plane2 = readCHR(tile * 16 + row + 8);
+        uint8_t plane1 = readCHR((tile << 4) + row);
+        uint8_t plane2 = readCHR((tile << 4) + row + 8);
 
         for( int column = 0; column < 8; column++ )
         {
             uint8_t paletteIndex = (((plane1 & (1 << column)) ? 1 : 0) + ((plane2 & (1 << column)) ? 2 : 0));
-            uint8_t colorIndex = palette[attribute * 4 + paletteIndex];
+            uint8_t colorIndex = palette[(attribute << 2) + paletteIndex];
             if( paletteIndex == 0 )
             {
                 // skip transparent pixels
@@ -223,7 +223,7 @@ void PPU::renderTile(uint32_t* buffer, int index, int xOffset, int yOffset)
 
 }
 
-void PPU::renderBG(uint32_t* buffer)
+void PPU::renderBGColor(uint32_t* buffer)
 {
     // Clear the buffer with the background color
     uint32_t palRGB = paletteRGB[palette[0]];
@@ -233,10 +233,8 @@ void PPU::renderBG(uint32_t* buffer)
     }
 }
 
-void PPU::render(uint32_t* buffer)
+void PPU::renderBGObj(uint32_t* buffer)
 {
-    
-
     uint8_t spritesEnabled = ppuMask & (1 << 4);
 
     // Draw sprites behind the backround
@@ -248,10 +246,10 @@ void PPU::render(uint32_t* buffer)
         for (int i = 63; i >= 0; i--)
         {
             // Read OAM for the sprite
-            uint8_t y          = oam[i * 4];
-            uint8_t index      = oam[i * 4 + 1];
-            uint8_t attributes = oam[i * 4 + 2];
-            uint8_t x          = oam[i * 4 + 3];
+            uint8_t y          = oam[(i << 2)];
+            uint8_t index      = oam[(i << 2) + 1];
+            uint8_t attributes = oam[(i << 2) + 2];
+            uint8_t x          = oam[(i << 2) + 3];
 
             // Check if the sprite has the correct priority
             if (!(attributes & (1 << 5)))
@@ -277,13 +275,13 @@ void PPU::render(uint32_t* buffer)
             // Copy pixels to the framebuffer
             for( int row = 0; row < 8; row++ )
             {
-                uint8_t plane1 = readCHR(tile * 16 + row);
-                uint8_t plane2 = readCHR(tile * 16 + row + 8);
+                uint8_t plane1 = readCHR((tile << 4) + row);
+                uint8_t plane2 = readCHR((tile << 4) + row + 8);
 
                 for( int column = 0; column < 8; column++ )
                 {
                     uint8_t paletteIndex = (((plane1 & (1 << column)) ? 1 : 0) + ((plane2 & (1 << column)) ? 2 : 0));
-                    uint8_t colorIndex = palette[0x10 + (attributes & 0x03) * 4 + paletteIndex];
+                    uint8_t colorIndex = palette[0x10 + ((attributes & 0x03) << 2) + paletteIndex];
                     if( paletteIndex == 0 )
                     {
                         // Skip transparent pixels
@@ -314,19 +312,22 @@ void PPU::render(uint32_t* buffer)
             }
         }
     }
+}
 
+void PPU::renderBGNT(uint32_t* buffer)
+{
     // Draw the background (nametable)
     if (ppuMask & (1 << 3)) // Is the background enabled?
     {
         int scrollX = (int)ppuScrollX + ((ppuCtrl & (1 << 0)) ? 256 : 0);
-        int xMin = scrollX / 8;
-        int xMax = ((int)scrollX + 256) / 8;
+        int xMin = scrollX >> 3;
+        int xMax = ((int)scrollX + 256) >> 3;
         for (int x = 0; x < 32; x++)
         {
             for (int y = 0; y < 4; y++)
             {
                 // Render the status bar in the same position (it doesn't scroll)
-                renderTile(buffer, 0x2000 + 32 * y + x, x * 8, y * 8);
+                renderTile(buffer, 0x2000 + 32 * y + x, x << 3, y << 3);
             }
         }
         for (int x = xMin; x <= xMax; x++)
@@ -349,10 +350,15 @@ void PPU::render(uint32_t* buffer)
                 }
 
                 // Render the tile
-                renderTile(buffer, index, (x * 8) - (int)scrollX, (y * 8));
+                renderTile(buffer, index, (x << 3) - (int)scrollX, (y << 3));
             }
         }
     }
+}
+
+void PPU::renderFGObj(uint32_t* buffer)
+{
+    uint8_t spritesEnabled = ppuMask & (1 << 4);
 
     // Draw sprites in front of the background
     if (spritesEnabled)
@@ -369,10 +375,10 @@ void PPU::render(uint32_t* buffer)
             int i = j % 64;
 
             // Read OAM for the sprite
-            uint8_t y          = oam[i * 4];
-            uint8_t index      = oam[i * 4 + 1];
-            uint8_t attributes = oam[i * 4 + 2];
-            uint8_t x          = oam[i * 4 + 3];
+            uint8_t y          = oam[(i << 2)];
+            uint8_t index      = oam[(i << 2) + 1];
+            uint8_t attributes = oam[(i << 2) + 2];
+            uint8_t x          = oam[(i << 2) + 3];
 
             // Check if the sprite has the correct priority
             //
@@ -402,13 +408,13 @@ void PPU::render(uint32_t* buffer)
             // Copy pixels to the framebuffer
             for( int row = 0; row < 8; row++ )
             {
-                uint8_t plane1 = readCHR(tile * 16 + row);
-                uint8_t plane2 = readCHR(tile * 16 + row + 8);
+                uint8_t plane1 = readCHR((tile << 4) + row);
+                uint8_t plane2 = readCHR((tile << 4) + row + 8);
 
                 for( int column = 0; column < 8; column++ )
                 {
                     uint8_t paletteIndex = (((plane1 & (1 << column)) ? 1 : 0) + ((plane2 & (1 << column)) ? 2 : 0));
-                    uint8_t colorIndex = palette[0x10 + (attributes & 0x03) * 4 + paletteIndex];
+                    uint8_t colorIndex = palette[0x10 + ((attributes & 0x03) << 2) + paletteIndex];
                     if( paletteIndex == 0 )
                     {
                         // Skip transparent pixels

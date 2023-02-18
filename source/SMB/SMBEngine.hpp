@@ -50,8 +50,11 @@ public:
      *
      * @param buffer a 256x240 32-bit color buffer for storing the rendering.
      */
-    void render(uint32_t* buffer);
-    void renderBG(uint32_t* buffer);
+    //void render(uint32_t* buffer);
+    void renderBGColor(uint32_t* buffer);
+    void renderBGObj(uint32_t* buffer);
+    void renderBGNT(uint32_t* buffer);
+    void renderFGObj(uint32_t* buffer);
 
     /**
      * Reset the game engine to power-on state.

@@ -38,7 +38,7 @@ SOURCES		:=	source source/Emulation source/SMB source/Util
 INCLUDES	:=	source
 ROMFS		:=	romfs
 #---------------------------------------------------------------------------------
-APP_VER						:= 0100
+APP_VER						:= 0101
 APP_TITLE					:= Super Mario Bros 3DS
 APP_DESCRIPTION				:= Super Mario Bros for Nintendo 3DS
 APP_AUTHOR					:= RetroGamer02
@@ -55,7 +55,7 @@ ICON        				:= SMB1Icon.png
 ARCH	:= -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
 CFLAGS	:= -Wall -Wcast-align -g -O3 -mword-relocations \
-		 -ffunction-sections -ffast-math \
+		 -ffunction-sections -ffast-math -fassociative-math \
 		$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM11 -D_3DS -D__3DS__ -DSDL_BUILDING_3DS

@@ -14,9 +14,9 @@ void tonccpy(void *dst, const void *src, uint size)
     {
         u32 *src32= (u32*)src, *dst32= (u32*)dst;
 
-        count= size/4;
+        count= size>>2;
         uint tmp= count&3;
-        count /= 4;
+        count >>= 2;
 
         // Duff's Device, good friend!
         switch(tmp) {
@@ -52,7 +52,7 @@ void tonccpy(void *dst, const void *src, uint size)
     }
 
     // Unaligned main: copy by 2x byte.
-    count= size/2;
+    count= size>>1;
     while (count--)
     {
         *dst16++ = src8[0] | src8[1]<<8;
@@ -75,9 +75,9 @@ void tonccpya(void *dst, const void *src, uint size)
 
     uint *src32= (uint*)src, *dst32= (uint*)dst;
 
-    count= size/4;
+    count= size>>2;
     uint tmp= count&3;
-    count /= 4;
+    count >>= 2;
 
     // Duff's Device, good friend!
     switch(tmp) {

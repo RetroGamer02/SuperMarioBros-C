@@ -146,7 +146,11 @@ void drawThreadFunc(void(*))
             i++;
         }
     }
-    smbEngine->renderBG(renderBuffer);
+    smbEngine->renderBGColor(renderBuffer);
+    smbEngine->renderBGObj(renderBuffer);
+    //smbEngine->renderBGNT(renderBuffer);
+    //smbEngine->renderFGObj(renderBuffer);
+    //smbEngine->render(renderBuffer);
 }
 
 static void mainLoop()
@@ -175,7 +179,7 @@ static void mainLoop()
 
     while (running)
     {
-        drawThread = threadCreate(drawThreadFunc, 0x0, 1024, 0x18, 1, true);
+        drawThread = threadCreate(drawThreadFunc, 0x0, 2*1024, 0x18, 1, true);
         SDL_Event event;
         while (SDL_PollEvent(&event))
 
@@ -271,7 +275,7 @@ static void mainLoop()
         }
 
         engine.update();
-        engine.render(renderBuffer);
+        //engine.renderFGObj(renderBuffer);
         
         //SDL_Flip(texture);
         
@@ -291,6 +295,8 @@ static void mainLoop()
             frame = 0;
             progStartTime = now;
         }
+        engine.renderBGNT(renderBuffer);
+        engine.renderFGObj(renderBuffer);
         SDL_Flip(texture);
         frame++;
     }
@@ -298,6 +304,8 @@ static void mainLoop()
 
 int main(int argc, char** argv)
 {
+    osSetSpeedupEnable(1);
+
     APT_SetAppCpuTimeLimit(70); // enables syscore usage
 
     gfxInitDefault();

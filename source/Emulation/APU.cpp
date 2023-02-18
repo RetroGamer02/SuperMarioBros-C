@@ -9,6 +9,8 @@
 
 #include "../tonccpy.h"
 
+//#pragma GCC optimize ("fast-math")
+
 static const uint8_t lengthTable[] = {
     10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 14, 12, 26, 14,
     12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 28, 32, 30
@@ -557,12 +559,12 @@ void APU::stepFrame()
 
         // Example: we need 735 samples per frame for 44.1KHz sound sampling
         //
-        int samplesToWrite = frequency / (Configuration::getFrameRate() * 4);
+        int samplesToWrite = frequency / (Configuration::getFrameRate() << 2);
         if (i == 3)
         {
             // Handle the remainder on the final tick of the frame counter
             //
-            samplesToWrite = (frequency / Configuration::getFrameRate()) - 3 * (frequency / (Configuration::getFrameRate() * 4));
+            samplesToWrite = (frequency / Configuration::getFrameRate()) - 3 * (frequency / (Configuration::getFrameRate() << 2));
         }
         
         SDL_LockAudio();

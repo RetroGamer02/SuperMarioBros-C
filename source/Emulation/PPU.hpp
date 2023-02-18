@@ -20,8 +20,11 @@ public:
     /**
      * Render to a frame buffer.
      */
-    void render(uint32_t* buffer);
-    void renderBG(uint32_t* buffer);
+    //void render(uint32_t* buffer);
+    void renderBGColor(uint32_t* buffer);
+    void renderBGObj(uint32_t* buffer);
+    void renderBGNT(uint32_t* buffer);
+    void renderFGObj(uint32_t* buffer);
 
     void writeDMA(uint8_t page);
 

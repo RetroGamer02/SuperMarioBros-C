@@ -56,7 +56,7 @@ void drawBox(uint32_t* buffer, unsigned int xOffset, unsigned int yOffset, unsig
                     tile = TILE_BOX_CENTER;
                 }
             }
-            drawCHRTile(buffer, xOffset + x * 8, yOffset + y * 8, tile, palette);
+            drawCHRTile(buffer, xOffset + x << 3, yOffset + y << 3, tile, palette);
         }
     }
 }
@@ -134,7 +134,7 @@ void drawText(uint32_t* buffer, unsigned int xOffset, unsigned int yOffset, cons
         {
             tile = 256 + 46;
         }
-        drawCHRTile(buffer, xOffset + i * 8, yOffset, tile, palette);
+        drawCHRTile(buffer, xOffset + i << 3, yOffset, tile, palette);
     }
 }
 

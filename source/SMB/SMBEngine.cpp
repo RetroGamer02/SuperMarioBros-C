@@ -56,14 +56,29 @@ Controller& SMBEngine::getController2()
     return *controller2;
 }
 
-void SMBEngine::render(uint32_t* buffer)
+/*void SMBEngine::render(uint32_t* buffer)
 {
     ppu->render(buffer);
+}*/
+
+void SMBEngine::renderBGColor(uint32_t* buffer)
+{
+    ppu->renderBGColor(buffer);
 }
 
-void SMBEngine::renderBG(uint32_t* buffer)
+void SMBEngine::renderBGObj(uint32_t* buffer)
 {
-    ppu->renderBG(buffer);
+    ppu->renderBGObj(buffer);
+}
+
+void SMBEngine::renderBGNT(uint32_t* buffer)
+{
+    ppu->renderBGNT(buffer);
+}
+
+void SMBEngine::renderFGObj(uint32_t* buffer)
+{
+    ppu->renderFGObj(buffer);
 }
 
 void SMBEngine::reset()
