@@ -135,22 +135,20 @@ static void shutdown()
 
 void drawThreadFunc(void(*))
 {
-    Uint8* pixel;
     int i = 0;
     for (int y = 0; y < RENDER_HEIGHT; y++)
     {
         for (int x = 0; x < RENDER_WIDTH; x++)
         {
-            pixel = (Uint8*)texture->pixels + y * texture->pitch + x * 3;
-            *(Uint32*)pixel = renderBuffer[i];
+            Uint8* pixel = static_cast<Uint8*>(texture->pixels + y * texture->pitch + x * 3);
+            *(Uint32*)(pixel) = renderBuffer[i];
+            //*(Uint32*)pixel = 0xFFFFFF; //Full white screen.
             i++;
         }
     }
+
     smbEngine->renderBGColor(renderBuffer);
     smbEngine->renderBGObj(renderBuffer);
-    //smbEngine->renderBGNT(renderBuffer);
-    //smbEngine->renderFGObj(renderBuffer);
-    //smbEngine->render(renderBuffer);
 }
 
 static void mainLoop()
@@ -162,18 +160,6 @@ static void mainLoop()
     
     int progStartTime = SDL_GetTicks();
     int frame = 0;
-
-    //Matrix containing the name of each key. Useful for printing when a key is pressed
-	char keysNames[32][32] = {
-		"KEY_A", "KEY_B", "KEY_SELECT", "KEY_START",
-		"KEY_DRIGHT", "KEY_DLEFT", "KEY_DUP", "KEY_DDOWN",
-		"KEY_R", "KEY_L", "KEY_X", "KEY_Y",
-		"", "", "KEY_ZL", "KEY_ZR",
-		"", "", "", "",
-		"KEY_TOUCH", "", "", "",
-		"KEY_CSTICK_RIGHT", "KEY_CSTICK_LEFT", "KEY_CSTICK_UP", "KEY_CSTICK_DOWN",
-		"KEY_CPAD_RIGHT", "KEY_CPAD_LEFT", "KEY_CPAD_UP", "KEY_CPAD_DOWN"
-	};
     
     Controller& controller1 = engine.getController1();
 
@@ -275,16 +261,12 @@ static void mainLoop()
         }
 
         engine.update();
-        //engine.renderFGObj(renderBuffer);
-        
-        //SDL_Flip(texture);
         
         /**
          * Ensure that the framerate stays as close to the desired FPS as possible. If the frame was rendered faster, then delay. 
          * If the frame was slower, reset time so that the game doesn't try to "catch up", going super-speed.
          */
         int now = SDL_GetTicks();
-        //int delay = progStartTime + int(double(frame) * double(MS_PER_SEC) / double(Configuration::getFrameRate())) - now;
         int delay = progStartTime + ((frame) * (MS_PER_SEC) / (Configuration::getFrameRate())) - now;
         if(delay > 0) 
         {

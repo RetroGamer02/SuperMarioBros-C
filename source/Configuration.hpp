@@ -22,7 +22,7 @@ public:
      * INI section (e.g. [example]) and key is the option
      * name in the section.
      */
-    ConfigurationOption(
+    explicit ConfigurationOption(
         const std::string& path);
     
     /**

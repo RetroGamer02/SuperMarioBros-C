@@ -13,7 +13,7 @@ class SMBEngine;
 class PPU
 {
 public:
-    PPU(SMBEngine& engine);
+    explicit PPU(SMBEngine& engine);
 
     uint8_t readRegister(uint16_t address);
 

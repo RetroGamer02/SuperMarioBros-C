@@ -26,7 +26,7 @@ public:
      *
      * @param romImage the data from the Super Mario Bros. ROM image.
      */
-    SMBEngine(uint8_t* romImage);
+    explicit SMBEngine(uint8_t* romImage);
 
     ~SMBEngine();
 

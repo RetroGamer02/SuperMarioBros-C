@@ -111,7 +111,7 @@ uint8_t PPU::getAttributeTableValue(uint16_t nametableAddress)
 uint16_t PPU::getNametableIndex(uint16_t address)
 {
     address = (address - 0x2000) % 0x1000;
-    int table = address / 0x400;
+    int table = address / 0x400; //No mul to div here.
     int offset = address % 0x400;
     int mode = 1; // Mirroring mode for Super Mario Bros.
     return (nametableMirrorLookup[mode][table] * 0x400 + offset) % 2048;

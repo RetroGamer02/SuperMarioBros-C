@@ -5,3 +5,9 @@ CMakeSettings.json
 *.pal
 smbc.conf
 *.bak
+*.a1
+*.s1
+*.cppcheck
+*.3dsx
+*.elf
+*.smdh

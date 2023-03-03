@@ -39,7 +39,7 @@ class Pulse
 {
     friend class APU;
 public:
-    Pulse(uint8_t channel)
+    explicit Pulse(uint8_t channel)
     {
         enabled = false;
         this->channel = channel;
